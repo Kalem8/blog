@@ -1,62 +1,21 @@
 import './App.css';
+import Header from './component/Header';
+import Layout from './component/Layout';
+import { Route, Routes } from "react-router-dom";
+import IndexPage from './pages/IndexPage';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+
 
 function App() {
   return (
-    <main>
-      <header>
-        <a href="" className="logo"> MyBlog </a>
-        <nav>
-          <a href="">Login</a>
-          <a href="">Register</a>
-        </nav>
-      </header>
-
-      <div className="post">
-        <div className="image">
-          <img src="https://techcrunch.com/wp-content/uploads/2014/10/money-cash-money-cash.jpg?w=1390&crop=1" alt="" />
-        </div>
-        <div className="texts">
-          <h2>Lorem, ipsum.</h2>
-          <p className='info'>
-            <a className='author'> Yunus Yildiz </a>
-            <time>2023 01-06 16:45</time>
-          </p>
-          <p className='summary'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt dolores eaque dignissimos, natus labore,
-            quas alias obcaecati vero non unde sit aut animi illo repudiandae!</p>
-        </div>
-      </div>
-
-      <div className="post">
-        <div className="image">
-          <img src="https://techcrunch.com/wp-content/uploads/2014/10/money-cash-money-cash.jpg?w=1390&crop=1" alt="" />
-        </div>
-        <div className="texts">
-          <h2>Lorem, ipsum.</h2>
-          <p className='info'>
-            <a className='author'> Yunus Yildiz </a>
-            <time>2023 01-06 16:45</time>
-          </p>
-          <p className='summary'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt dolores eaque dignissimos, natus labore,
-            quas alias obcaecati vero non unde sit aut animi illo repudiandae!</p>
-        </div>
-      </div>
-
-      <div className="post">
-        <div className="image">
-          <img src="https://techcrunch.com/wp-content/uploads/2014/10/money-cash-money-cash.jpg?w=1390&crop=1" alt="" />
-        </div>
-        <div className="texts">
-          <h2>Lorem, ipsum.</h2>
-          <p className='info'>
-            <a className='author'> Yunus Yildiz </a>
-            <time>2023 01-06 16:45</time>
-          </p>
-          <p className='summary'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt dolores eaque dignissimos, natus labore,
-            quas alias obcaecati vero non unde sit aut animi illo repudiandae!</p>
-        </div>
-      </div>
-
-    </main>
+    <Routes>
+      <Route path='/' element={<Layout />}>
+        <Route index element={<IndexPage />} />
+        <Route path={'/login'} element={<LoginPage />} />
+        <Route path={'/register'} element={ <RegisterPage /> } />
+      </Route>
+    </Routes>
   )
 }
 
