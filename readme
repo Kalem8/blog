@@ -1,0 +1,13 @@
+#Mern - Blog
+
+Bonjour, mon objectif est de faire un projet utilisant la Stack MERN. Pour les néophytes, MERN est un acronyme :
+
+M : MongoDB : Il s'agit d'une technologie de base de données NoSQL (Not only SQL). Pour faciliter le travail, j'utilise Mongoose, une bibliothèque node.js pour faciliter les interactions avec la BD. E : Express : C'est un framework de node.js pour gérer les requêtes HTTP mais donne aussi accès aux middlewares. R : React : Une librairie JavaScript pour réaliser la partie front-end. N : Node
+
+Il s'agit de la première page de présentation du projet. Court mais exhaustif, je souhaite faire la MAJ au fur et à mesure. Je ne voulais pas consacrer plus de temps à la présentation du projet, avant d'avoir terminé.
+
+Je vous remercie, vous êtes très nombreux à suivre le travail que je fais. Cela me rend particulièrement heureux. Si vous souhaitez de l'aide, n'hésitez pas à me contacter via LinkedIn : Yunus Yildiz.
+
+[Fin du projet prévue le 01/02/2023] Et enfin ! Je tiens à préciser que je suis à la recherche d'une alternance pour le 25 mars 2024.
+
+À plus !

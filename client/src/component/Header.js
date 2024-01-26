@@ -5,10 +5,10 @@ export default function Header() {
     return (
 
         <header>
-            <Link to="" className="logo"> MyBlog </Link>
+            <Link to="" className="logo"> MonBlog </Link>
             <nav>
-                <Link to="/login">Login</Link>
-                <Link to="/register">Register</Link>
+                <Link to="/login">Connexion</Link>
+                <Link to="/register">Inscription</Link>
             </nav>
         </header>
 
