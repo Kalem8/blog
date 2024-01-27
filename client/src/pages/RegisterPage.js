@@ -1,11 +1,11 @@
 import { useState } from "react";
 
 export default function RegisterPage() {
-    //data (ici je vais stocker les informations que l'utilisateur va écrire)
+    //data 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
-    //Logique (C'est dans ce compartiment du composant que l'on va effectuer les changements de data)
+    //Logique 
     function WritingInputUsername(event) {
         setUsername(event.target.value)
     }
