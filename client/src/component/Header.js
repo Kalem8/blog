@@ -1,14 +1,35 @@
+import { useEffect, useState } from "react";
 import {Link} from "react-router-dom";
 
 export default function Header() {
+    const [username, setUsername] = useState(null);
+    useEffect(()=> {
+        fetch('http://localhost:4000/profile', {
+            credentials: 'include',
+        }).then(response => {
+            response.json().then(userInfo => {
+                setUsername(userInfo.username);
+            })
+        })
+    }, []);
 
     return (
 
         <header>
             <Link to="" className="logo"> MonBlog </Link>
             <nav>
-                <Link to="/login">Connexion</Link>
-                <Link to="/register">Inscription</Link>
+                {username && (
+                    <>
+                        <Link to="/create"> Créer un article </Link>
+                        <a href="">Logout</a>
+                    </>
+                )}
+                {!username && (
+                    <>
+                        <Link to="/login">Connexion</Link>
+                        <Link to="/Register">Inscription</Link>
+                    </>
+                )}
             </nav>
         </header>
 

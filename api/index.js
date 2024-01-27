@@ -7,17 +7,26 @@ const User = require('./models/User')
 const bcrypt = require('bcryptjs');
 //Création de token pour les utilisateurs
 const jwt = require('jsonwebtoken');
+const cookieParser= require('cookie-parser')
 
+
+//Mot de passe
 const salt = bcrypt.genSaltSync(10);
 const secret ='zefijhzefhouiyzehf54156zefzef456';
+
+
 
 //Midlewares
 //On précise dans cors (notre gestionaire domaine) le credentials car on envoi des cookies cross-origin
 app.use(cors({credentials:true,origin:'http://localhost:3000'})); 
 app.use(express.json());
+app.use(cookieParser());
+
 
 //Lien d'identification sur la base de donnée.
 mongoose.connect('mongodb+srv://blog:EuLoiVgJ5Y63DBDk@mern-blog.c2vhfnh.mongodb.net/');
+
+
 
 app.post('/register', async (req,res) => {
     const {username, password} = req.body;
@@ -51,5 +60,14 @@ app.post('/login', async (req, res)=>{
     }
 })
 
+//Check si le token est valide 
+app.get('/profile', (req, res) => {
+    const {token} = req.cookies;
+    jwt.verify(token, secret, {}, (err, info)=> {
+        if (err) throw err;
+        res.json(info);
+    })
+    res.json(req.cookies);
+}) 
 
 app.listen(4000);
