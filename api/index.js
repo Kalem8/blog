@@ -52,7 +52,11 @@ app.post('/login', async (req, res) => {
         // {username, id:userDoc._id} ici, il inclut l'utilisateur et son id dans le token
         jwt.sign({ username, id: userDoc._id }, secret, {}, (err, token) => {
             //Lors de la connexion réussi, le callback est lanc
-            res.cookie('token', token).json('ok');
+            if (err) throw err;
+            res.cookie('token', token).json({
+                id: userDoc._id,
+                username,
+            });
         })
     } else {
         //Status 401 Unauthorized plus précis que 400 Bad request
@@ -65,12 +69,17 @@ app.post('/login', async (req, res) => {
 app.get('/profile', (req, res) => {
     const { token } = req.cookies;
     jwt.verify(token, secret, {}, (err, info) => {
-        if (err) throw err;
+        if (err) {
+            // Gestion de l'erreur - envoi un statut 401 Unauthorized
+            return res.status(401).json({ message: "Invalid or expired token" });
+        }
+        // Envoi les données de l'utilisateur si le token est valide
         res.json(info);
     });
 });
 
-app.post('/logout', (req,res) => {
+
+app.post('/logout', (req, res) => {
     res.cookie('token', '').json('ok');
 })
 
