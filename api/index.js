@@ -3,12 +3,16 @@ const app = express();
 const cors = require('cors');
 const mongoose = require("mongoose");
 const User = require('./models/User')
+const Post = require('./models/Post')
 //Gestions des mot de passe
 const bcrypt = require('bcryptjs');
 //Création de token pour les utilisateurs
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser')
-
+//Middleware qui gère l'envoi des fichiers 
+const multer = require('multer');
+const uploadMiddleware = multer({ dest: 'uploads/' });
+const fs = require('fs')
 
 //Mot de passe
 const salt = bcrypt.genSaltSync(10);
@@ -23,11 +27,11 @@ app.use(express.json());
 app.use(cookieParser());
 
 
-//Lien d'identification sur la base de donnée.
+//Lien d'identification sur la base de donnée. [MAJ à faire pour la sécurité plus tard]
 mongoose.connect('mongodb+srv://blog:EuLoiVgJ5Y63DBDk@mern-blog.c2vhfnh.mongodb.net/');
 
 
-
+//Inscription
 app.post('/register', async (req, res) => {
     const { username, password } = req.body;
     try {
@@ -40,6 +44,8 @@ app.post('/register', async (req, res) => {
         res.status(400).json(error);
     }
 })
+
+
 //Connexion 
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
@@ -82,5 +88,25 @@ app.get('/profile', (req, res) => {
 app.post('/logout', (req, res) => {
     res.cookie('token', '').json('ok');
 })
+
+
+//Poster un article
+app.post('/post', uploadMiddleware.single('file'), async (req, res) => {
+    const { originalname, path } = req.file;
+    const parts = originalname.split('.');
+    const ext = parts[parts.length - 1];
+    const newPath = path + '.' + ext;
+    fs.renameSync(path, newPath);
+
+    const { title, summary, content } = req.body;
+    const postDoc = await Post.create({
+        title,
+        summary,
+        content,
+        cover: newPath,
+    });
+
+    res.json(postDoc)
+});
 
 app.listen(4000);

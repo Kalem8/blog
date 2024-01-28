@@ -1,0 +1,4 @@
+MAJ à faire :
+
+Lien d'identification sur la base de donnée. [MAJ à faire pour la sécurité plus tard]
+mongoose.connect('mongodb+srv://blog:EuLoiVgJ5Y63DBDk@mern-blog.c2vhfnh.mongodb.net/');
