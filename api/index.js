@@ -7,18 +7,18 @@ const User = require('./models/User')
 const bcrypt = require('bcryptjs');
 //Création de token pour les utilisateurs
 const jwt = require('jsonwebtoken');
-const cookieParser= require('cookie-parser')
+const cookieParser = require('cookie-parser')
 
 
 //Mot de passe
 const salt = bcrypt.genSaltSync(10);
-const secret ='zefijhzefhouiyzehf54156zefzef456';
+const secret = 'zefijhzefhouiyzehf54156zefzef456';
 
 
 
 //Midlewares
 //On précise dans cors (notre gestionaire domaine) le credentials car on envoi des cookies cross-origin
-app.use(cors({credentials:true,origin:'http://localhost:3000'})); 
+app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
 app.use(express.json());
 app.use(cookieParser());
 
@@ -28,12 +28,12 @@ mongoose.connect('mongodb+srv://blog:EuLoiVgJ5Y63DBDk@mern-blog.c2vhfnh.mongodb.
 
 
 
-app.post('/register', async (req,res) => {
-    const {username, password} = req.body;
+app.post('/register', async (req, res) => {
+    const { username, password } = req.body;
     try {
         const userDoc = await User.create({
             username,
-            password:bcrypt.hashSync(password,salt),
+            password: bcrypt.hashSync(password, salt),
         })
         res.json(userDoc);
     } catch (error) {
@@ -41,16 +41,16 @@ app.post('/register', async (req,res) => {
     }
 })
 //Connexion 
-app.post('/login', async (req, res)=>{
-    const {username, password} = req.body;
+app.post('/login', async (req, res) => {
+    const { username, password } = req.body;
     //Cherche le nom d'utilisateur dans la DB
-    const userDoc = await User.findOne({username});
+    const userDoc = await User.findOne({ username });
     //Compare password avec userDoc.password (dans la DB) 
     const passwordIsOk = bcrypt.compareSync(password, userDoc.password);
     if (passwordIsOk) {
-        // Sign Création du token de l'utilisateur 
+        // Sign : Création du token de l'utilisateur 
         // {username, id:userDoc._id} ici, il inclut l'utilisateur et son id dans le token
-        jwt.sign( {username, id:userDoc._id}, secret, {}, (err, token) => {
+        jwt.sign({ username, id: userDoc._id }, secret, {}, (err, token) => {
             //Lors de la connexion réussi, le callback est lanc
             res.cookie('token', token).json('ok');
         })
@@ -60,14 +60,18 @@ app.post('/login', async (req, res)=>{
     }
 })
 
-//Check si le token est valide 
+// Endpoint pour vérifier le token JWT de l'utilisateur. Si le token est valide, 
+//renvoie les informations décodées de l'utilisateur à l'adresse /profile.
 app.get('/profile', (req, res) => {
-    const {token} = req.cookies;
-    jwt.verify(token, secret, {}, (err, info)=> {
+    const { token } = req.cookies;
+    jwt.verify(token, secret, {}, (err, info) => {
         if (err) throw err;
         res.json(info);
-    })
-    res.json(req.cookies);
-}) 
+    });
+});
+
+app.post('/logout', (req,res) => {
+    res.cookie('token', '').json('ok');
+})
 
 app.listen(4000);
