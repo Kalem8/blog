@@ -25,6 +25,7 @@ const secret = 'zefijhzefhouiyzehf54156zefzef456';
 app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
 app.use(express.json());
 app.use(cookieParser());
+app.use('/uploads', express.static(__dirname + '/uploads'))
 
 
 //Lien d'identification sur la base de donnée. [MAJ à faire pour la sécurité plus tard]
@@ -98,15 +99,38 @@ app.post('/post', uploadMiddleware.single('file'), async (req, res) => {
     const newPath = path + '.' + ext;
     fs.renameSync(path, newPath);
 
-    const { title, summary, content } = req.body;
-    const postDoc = await Post.create({
-        title,
-        summary,
-        content,
-        cover: newPath,
-    });
+    const { token } = req.cookies;
+    jwt.verify(token, secret, {}, async (err, info) => {
+        if (err) {
+            // Gestion de l'erreur - envoi un statut 401 Unauthorized
+            return res.status(401).json({ message: "Invalid or expired token" });
+        }
+        const { title, summary, content } = req.body;
+        const postDoc = await Post.create({
+            title,
+            summary,
+            content,
+            cover: newPath,
+            author: info.id,
 
-    res.json(postDoc)
+        });
+        res.json(postDoc);
+    });
 });
+
+app.get('/post', async (req, res) => {
+    try {
+        const posts =
+            await Post.find()
+            .populate('author', ['username'])
+            .sort({createdAt: -1})
+            .limit(20)
+        res.json(posts);
+    } catch (error) {
+        res.status(500).json({ message: "Erreur lors de la récupération des posts" });
+    }
+});
+
+
 
 app.listen(4000);

@@ -47,6 +47,7 @@ export default function CreatePostePage() {
         const response = await fetch('http://localhost:4000/post', {
             method: 'POST',
             body: data,
+            credentials: 'include',
         })
         if (response.ok) {
             setRedirect(true);
@@ -56,6 +57,7 @@ export default function CreatePostePage() {
     if (redirect) {
         return <Navigate to={'/'} />
     }
+    
     return (
         <form onSubmit={createNewPost} enctype="multipart/form-data" >
             <input type="text"
