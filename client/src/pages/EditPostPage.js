@@ -18,7 +18,16 @@ export default function EditPostPage() {
     function handleChangeSummary(event) {
         setSummary(event.target.value)
     }
-
+    useEffect(() => {
+        fetch('http://localhost:4000/post/'+id)
+            .then(response => {
+                response.json().then(postInfo => {
+                    setTitle(postInfo.title);
+                    setContent(postInfo.content);
+                    setSummary(postInfo.summary);
+                });
+            });
+    }, []);
 
     async function updatePost(event) {
         event.preventDefault();
@@ -42,25 +51,16 @@ export default function EditPostPage() {
         }
     }
 
-    useEffect(() => {
-        fetch('http://localhost:4000/post/' + id)
-            .then(response => {
-                response.json().then(postInfo => {
-                    setTitle(postInfo.title);
-                    setContent(postInfo.content);
-                    setSummary(postInfo.summary);
-                });
-            });
-    }, []);
+
 
     if (redirect) {
-        return <Navigate to={'/post/' + id} />
+        return <Navigate to={'/post/'+id} />
     }
 
 
     return (
-        <form onSubmit={updatePost} enctype="multipart/form-data" >
-            <input type="text"
+        <form onSubmit={updatePost} encType="multipart/form-data" >
+            <input type="title"
                 placeholder={"Title"}
                 value={title}
                 onChange={handleChangeTitle} />

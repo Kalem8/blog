@@ -121,38 +121,45 @@ app.post('/post', uploadMiddleware.single('file'), async (req, res) => {
 
 });
 
+//Update de l'article
 app.put('/post', uploadMiddleware.single('file'), async (req, res) => {
     let newPath = null;
     if (req.file) {
         const { originalname, path } = req.file;
         const parts = originalname.split('.');
         const ext = parts[parts.length - 1];
-        newPath = path+'.'+ext;
+        newPath = path + '.' + ext;
         fs.renameSync(path, newPath);
     }
 
     const { token } = req.cookies;
     jwt.verify(token, secret, {}, async (err, info) => {
-        if (err) { return res.status(401).json({ message: "Invalid or expired token" }); }
+        if (err) { 
+            return res.status(401).json({ message: "Invalid or expired token" }); 
+        }
         const { id, title, summary, content } = req.body;
         const postDoc = await Post.findById(id);
+        if (!postDoc) {
+            return res.status(404).json({ message: "Article non trouvé" });
+        }
         const isAuthor = JSON.stringify(postDoc.author) === JSON.stringify(info.id);
         if (!isAuthor) {
-            return res.status(400).json("Tu n'es pas l'auteur");
+            return res.status(403).json("Tu n'es pas l'auteur de l'article");
         }
 
-        await postDoc.update({
-            title,
-            summary,
-            content,
-            cover: newPath ? newPath : postDoc.cover,
-        });
+        postDoc.title = title;
+        postDoc.summary = summary;
+        postDoc.content = content;
+        if (newPath) {
+            postDoc.cover = newPath;
+        }
+        await postDoc.save();
 
         res.json(postDoc);
     });
-
-
 });
+
+
 
 app.get('/post', async (req, res) => {
     try {
@@ -166,6 +173,7 @@ app.get('/post', async (req, res) => {
         res.status(500).json({ message: "Erreur lors de la récupération des posts" });
     }
 });
+
 
 app.get('/post/:id', async (req, res) => {
     const { id } = req.params;
