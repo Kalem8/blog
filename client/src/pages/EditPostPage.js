@@ -1,45 +1,65 @@
-import { useState } from "react";
-import 'react-quill/dist/quill.snow.css'
-import { Navigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Navigate, useParams } from "react-router-dom";
 import Editor from "../component/Editor";
 
-export default function CreatePostePage() {
+
+export default function EditPostPage() {
+    const { id } = useParams();
     const [title, setTitle] = useState('');
     const [summary, setSummary] = useState('');
     const [content, setContent] = useState('');
     const [files, setFiles] = useState('');
     const [redirect, setRedirect] = useState(false);
 
+
     function handleChangeTitle(event) {
         setTitle(event.target.value)
     }
     function handleChangeSummary(event) {
         setSummary(event.target.value)
-
     }
 
-    async function createNewPost(event) {
 
+    async function updatePost(event) {
+        event.preventDefault();
         const data = new FormData();
         data.set('title', title);
         data.set('summary', summary);
         data.set('content', content);
-        data.set('file', files[0]);
-        event.preventDefault();
+        data.set('id', id);
+        //On note un ? car il est possible qu'il n y'est pas d'image.
+        if (files?.[0]) {
+            data.set('file', files?.[0]);
+        }
         const response = await fetch('http://localhost:4000/post', {
-            method: 'POST',
+            method: 'PUT',
             body: data,
             credentials: 'include',
-        })
+        });
+
         if (response.ok) {
             setRedirect(true);
         }
     }
+
+    useEffect(() => {
+        fetch('http://localhost:4000/post/' + id)
+            .then(response => {
+                response.json().then(postInfo => {
+                    setTitle(postInfo.title);
+                    setContent(postInfo.content);
+                    setSummary(postInfo.summary);
+                });
+            });
+    }, []);
+
     if (redirect) {
-        return <Navigate to={'/'} />
+        return <Navigate to={'/post/' + id} />
     }
+
+
     return (
-        <form onSubmit={createNewPost} encType="multipart/form-data" >
+        <form onSubmit={updatePost} enctype="multipart/form-data" >
             <input type="text"
                 placeholder={"Title"}
                 value={title}
@@ -50,9 +70,8 @@ export default function CreatePostePage() {
                 onChange={handleChangeSummary} />
             <input type="file"
                 onChange={event => setFiles(event.target.files)} />
-            <Editor value={content} onChange={setContent} />
-            <button style={{ marginTop: '5px' }}>Créer un article</button>
+            <Editor onChange={setContent} value={content} />
+            <button style={{ marginTop: '5px' }}>Editer l'article</button>
         </form>
     )
-
 }
