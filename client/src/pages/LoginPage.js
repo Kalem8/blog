@@ -34,7 +34,7 @@ export default function LoginPage() {
                 setRedirect(true);
             })
         } else {
-            alert('wrong credentials')
+            alert("Nom d'utilisateur ou mot de passe incorrect")
         }
     }
 
@@ -56,7 +56,7 @@ export default function LoginPage() {
                 value={password}
                 onChange={WritingInputPassword}
             />
-            <button>Connexion</button>
+            <button className="btn-one">Connexion</button>
         </form>
     )
 }

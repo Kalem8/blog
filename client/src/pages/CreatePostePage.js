@@ -51,7 +51,7 @@ export default function CreatePostePage() {
             <input type="file"
                 onChange={event => setFiles(event.target.files)} />
             <Editor value={content} onChange={setContent} />
-            <button style={{ marginTop: '5px' }}>Créer un article</button>
+            <button className="btn-one" style={{ marginTop: '5px' }}>Créer un article</button>
         </form>
     )
 

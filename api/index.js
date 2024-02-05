@@ -134,8 +134,8 @@ app.put('/post', uploadMiddleware.single('file'), async (req, res) => {
 
     const { token } = req.cookies;
     jwt.verify(token, secret, {}, async (err, info) => {
-        if (err) { 
-            return res.status(401).json({ message: "Invalid or expired token" }); 
+        if (err) {
+            return res.status(401).json({ message: "Invalid or expired token" });
         }
         const { id, title, summary, content } = req.body;
         const postDoc = await Post.findById(id);
@@ -181,6 +181,27 @@ app.get('/post/:id', async (req, res) => {
     res.json(postDoc);
 })
 
+app.delete('/post/:id', async (req, res) => {
+    const { token } = req.cookies;
+    jwt.verify(token, secret, {}, async (err, info) => {
+        if (err) {
+            return res.status(401).json({ message: "Session expiré ou invalid" });
+        }
 
+        const { id } = req.params;
+        const postDoc = await Post.findById(id);
+        if (!postDoc) {
+            return res.status(404).json({ message: "Article non trouvé" });
+        }
+
+        const isAuthor = JSON.stringify(postDoc.author) === JSON.stringify(info.id);
+        if (!isAuthor) {
+            return res.status(403).json("Tu n'es pas l'auteur de l'article");
+        }
+
+        await Post.findByIdAndDelete(id);
+        res.json({ message: "Article supprimé avec succès" });
+    });
+});
 
 app.listen(4000);

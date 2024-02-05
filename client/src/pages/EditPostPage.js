@@ -51,8 +51,6 @@ export default function EditPostPage() {
         }
     }
 
-
-
     if (redirect) {
         return <Navigate to={'/post/'+id} />
     }
@@ -71,7 +69,7 @@ export default function EditPostPage() {
             <input type="file"
                 onChange={event => setFiles(event.target.files)} />
             <Editor onChange={setContent} value={content} />
-            <button style={{ marginTop: '5px' }}>Editer l'article</button>
+            <button className="btn-one" style={{ marginTop: '5px' }}>Editer l'article</button>
         </form>
     )
 }

@@ -39,7 +39,7 @@ export default function RegisterPage() {
                 placeholder="Mot de passe"
                 value={password}
                 onChange={WritingInputPassword} />
-            <button>Register</button>
+            <button className="btn-one">Register</button>
         </form>
     )
 }
