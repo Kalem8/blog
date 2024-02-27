@@ -13,6 +13,7 @@ const cookieParser = require('cookie-parser')
 const multer = require('multer');
 const uploadMiddleware = multer({ dest: 'uploads/' });
 const fs = require('fs')
+require('dotenv').config();
 
 //Mot de passe
 const salt = bcrypt.genSaltSync(10);
@@ -22,15 +23,14 @@ const secret = 'zefijhzefhouiyzehf54156zefzef456';
 
 //Midlewares
 //On précise dans cors (notre gestionaire domaine) le credentials car on envoi des cookies cross-origin
-app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
+app.use(cors({ credentials: true, origin: process.env.CORS_ORIGIN }));
 app.use(express.json());
 app.use(cookieParser());
 app.use('/uploads', express.static(__dirname + '/uploads'))
 
 
-//Lien d'identification sur la base de donnée. [MAJ à faire pour la sécurité plus tard]
-mongoose.connect('mongodb+srv://blog:EuLoiVgJ5Y63DBDk@mern-blog.c2vhfnh.mongodb.net/');
-
+//Lien d'identification sur la base de donnée. Protégé dans le fichier .env
+mongoose.connect(process.env.MONGODB_URI);
 
 //Inscription
 app.post('/register', async (req, res) => {
@@ -57,7 +57,7 @@ app.post('/login', async (req, res) => {
     if (passwordIsOk) {
         // Sign : Création du token de l'utilisateur 
         // {username, id:userDoc._id} ici, il inclut l'utilisateur et son id dans le token
-        jwt.sign({ username, id: userDoc._id }, secret, {}, (err, token) => {
+        jwt.sign({ username, id: userDoc._id }, process.env.JWT_SECRET, {}, (err, token) => {
             //Lors de la connexion réussi, le callback est lanc
             if (err) throw err;
             res.cookie('token', token).json({
