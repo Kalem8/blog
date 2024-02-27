@@ -9,5 +9,11 @@
     "mongoose": "^8.1.1",
     "multer": "^1.4.5-lts.1",
     "react-router-dom": "^6.21.3"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "scripts": {
+    "start": "concurrently \"cd api && nodemon index.js\" \"cd client && yarn start\""
   }
 }
